@@ -5,7 +5,7 @@ const { viewRoles } = require("./DB");
 
 getStart()
 
-function getStart(){
+function getStart() {
     inquirer
         .prompt(
             {
@@ -14,57 +14,56 @@ function getStart(){
                 message: "Welcome to the Business Corp, Business Co.'s DataBusiness\n...we mean Database.\n Now! What would you like to do?",
                 choices: ["View employee list", "Add an employee", "Edit employee role", "Remove employee", "Employees by Department", "View roles", "Add role", "remove role", "View departments", "Add department", "Remove Department", "I quit"]
             })
-            .then(choiest => {
-                switch(choiest.options) {
-                    case "I quit":
-                        console.log("okay. Quitter.")
-                        process.exit()
-                        
-                    case "Add an employee":
-                        addEmployee();
-                        break;
+        .then(choiest => {
+            switch (choiest.options) {
+                case "I quit":
+                    console.log("okay. Quitter.")
+                    process.exit()
 
-                    case "Edit employee role":
-                        findEmployee();
-                        break;
+                case "Add an employee":
+                    addEmployee();
+                    break;
 
-                    case "Remove employee":
-                        deleteEmployee();
-                        break;
+                case "Edit employee role":
+                    findEmployee();
+                    break;
 
-                    case "View roles":
-                        db.viewRoles()
-                        getStart()
-                        break;
-                    
-                    case "Add role":
-                        console.log("function not yet ready. Still got more work to do.");
-                        connection.end();
-                        break;
+                case "Remove employee":
+                    deleteEmployee();
+                    break;
 
-                    case "Add department":
-                        addDepart();
-                        break;
-                    
-                    case "View employee list":
-                        readEmployee();
-                        break;
+                case "View roles":
+                    db.viewRoles()
+                    getStart()
+                    break;
 
-                    case "Employees by Department":
-                        findEmpByDept()
-                        break;
+                case "Add role":
+                    addRole()
+                    break;
 
-                    case "View departments":
-                        db.viewDeparts()
-                        getStart()
-                        break;
+                case "Add department":
+                    addDepart();
+                    break;
 
-                    default:
-                        readEmployee()
-                }
-                
-            })
-    }
+                case "View employee list":
+                    readEmployee();
+                    break;
+
+                case "Employees by Department":
+                    findEmpByDept()
+                    break;
+
+                case "View departments":
+                    db.viewDeparts()
+                    getStart()
+                    break;
+
+                default:
+                    readEmployee()
+            }
+
+        })
+}
 
 function addEmployee() {
     let employee = {}
@@ -73,47 +72,48 @@ function addEmployee() {
         {
             name: "first_name",
             type: "input",
-            message:"What is the employee's first name?"
+            message: "What is the employee's first name?"
         },
         {
             name: "last_name",
             type: "input",
-            message:"And what is their last name?"
+            message: "And what is their last name?"
         },
         {
             name: "role_id",
             type: "input",
-            message:"What is their role_id number?"
+            message: "What is their role_id number?"
         },
         {
             name: "manager_id",
             type: "input",
-            message:"What is their manager's id number?"
+            message: "What is their manager's id number?"
         }
-    ]).then(input =>{ 
-        employee = { 
-        first_name: input.first_name,
-        last_name: input.last_name,
-        role_id: input.role_id,
-        manager_id: input.manager_id
-       } 
+    ]).then(input => {
+        employee = {
+            first_name: input.first_name,
+            last_name: input.last_name,
+            role_id: input.role_id,
+            manager_id: input.manager_id
+        }
 
-    console.log(employee);
-    db.createEmployee(employee);
-    
-    getStart()
+        console.log(employee);
+        db.createEmployee(employee);
+
+        getStart()
     })
-    
+
 }
 
 function findEmployee() {
     // TODO: Add inquirer prompts to specify the changes needed.
-    db.connection.query("SELECT * FROM employee", (err, employees) =>{
-        if(err) {
+    let empRole = {}
+    db.connection.query("SELECT * FROM employee", (err, employees) => {
+        if (err) {
             throw err
-        } else{
+        } else {
             const namesOfEmployees = [];
-            for (let i=0; i< employees.length; i++){
+            for (let i = 0; i < employees.length; i++) {
                 const inqObjt = {
                     name: `${employees[i].first_name} ${employees[i].last_name}`,
                     value: employees[i]
@@ -129,14 +129,18 @@ function findEmployee() {
                     type: "list",
                     message: "Update which employee's information?",
                     choices: namesOfEmployees
-                }              
-            ]).then(answer=>{
-                console.log(answer.name)
+                }
+            ]).then(answer => {
                 console.log(answer)
-                editEmployee()
+                console.log(answer.id)
+                empRole = {
+                    id: answer.id,
+                    name: answer.role_id
+                }
+                console.log(answer)
+                // editEmployee()
             })
 
-            
             // console.log("Right chief, updating employee information");
             // const query = connection.query(
             //     "UPDATE employee set ? WHERE ?",
@@ -156,21 +160,21 @@ function findEmployee() {
 
         }
     })
-   
+
 }
 
-function deleteEmployee(){
+function deleteEmployee() {
     // TODO: provdide a table of the employess and a prompt for the employee's id.
     console.log("tough break, man. Let's just get this done.");
-    const query = connection.query( 
+    const query = connection.query(
         "DELETE FROM employee WHERE ?",
         {
             // id:"8"
         },
-        function (err, res){
+        function (err, res) {
             if (err) throw err;
             console.table(res)
-            console.log("Alright, that's take care of");
+            console.log("Alright, that's taken care of");
             readEmployee();
         }
     )
@@ -178,7 +182,7 @@ function deleteEmployee(){
 
 function readEmployee() {
     console.log("So here's a list of the employees...\n");
-    db.connection.query("SELECT * FROM employee", function(err, res) {
+    db.connection.query("SELECT * FROM employee", function (err, res) {
         if (err) throw err;
         console.table(res);
         db.connection.end()
@@ -187,12 +191,12 @@ function readEmployee() {
 
 function findEmpByDept() {
     let dept = {};
-    db.connection.query("SELECT * FROM department", (err, departments) =>{
-        if(err) {
+    db.connection.query("SELECT * FROM department", (err, departments) => {
+        if (err) {
             throw err
-        } else{
+        } else {
             const nameOfDepartments = [];
-            for (let i=0; i< departments.length; i++){
+            for (let i = 0; i < departments.length; i++) {
                 const inqObjt = {
                     name: `${departments[i].name}`,
                     value: departments[i]
@@ -208,42 +212,93 @@ function findEmpByDept() {
                     type: "list",
                     message: "Which departments's information?",
                     choices: nameOfDepartments
-                }              
+                }
             ]).then(choice => {
                 console.log(choice);
                 dept = {
                     id: choice.id,
                     name: choice.name
                 }
-                console.log(dept);
+                console.log(dept.id);
                 db.empByDepartment(dept)
-              })
-              ;
+            })
+                ;
         }
     })
-    
+
 }
-function addDepart(){
+function addDepart() {
     let departObj = {}
     // TODO: add inquirer prompts to fill the inserted info
     inquirer.prompt([
         {
             name: "name",
             type: "input",
-            message:"What's the name of the department?"
+            message: "What's the name of the department?"
         }
-    ]).then(input =>{ 
-        departObj = { 
-        name: input.name,
-       } 
+    ]).then(input => {
+        departObj = {
+            name: input.name,
+        }
 
-    console.log(departObj);
-    console.log("The department has been added");
-    db.createDepart(departObj);
-    
-    
-    
-    getStart()
+        console.log(departObj);
+        console.log("The department has been added");
+        db.createDepart(departObj);
+
+
+
+        getStart()
     })
-    
+
+}
+
+function addRole() {
+    let newRole = {}
+    // TODO: add inquirer prompts to fill the inserted info
+    db.connection.query("SELECT * FROM department", (err, depts) => {
+        if (err) {
+            throw err
+        } else {
+            const namesOfDepts = [];
+            for (let i = 0; i < depts.length; i++) {
+                const inqObjt = {
+                    name: depts[i].name,
+                    
+                }
+                namesOfDepts.push(inqObjt)
+            }
+            console.table(namesOfDepts)
+            console.log("=================================")
+            inquirer.prompt([
+                {
+                    name: "title",
+                    type: "input",
+                    message: "What is the title of the role?"
+                },
+                {
+                    name: "salary",
+                    type: "input",
+                    message: "And what is the salary? (numbers only, please)"
+                },
+                {
+                    name: "id",
+                    type: "list",
+                    message: "which department is it in?",
+                    choices: namesOfDepts
+                },
+
+            ]).then(input => {
+                newRole = {
+                    title: input.title,
+                    salary: input.salary,
+                    department_id: input.id
+                }
+
+                console.log(newRole);
+                db.createRole(newRole);
+
+                getStart()
+            })
+        }
+    })
 }
