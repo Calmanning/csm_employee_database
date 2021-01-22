@@ -54,12 +54,13 @@ function getStart() {
                     break;
 
                 case "View departments":
-                    db.viewDeparts()
-                    getStart()
+                    db.viewDeparts();
+                    getStart();
                     break;
 
                 default:
-                    readEmployee()
+                    readEmployee();
+                    process.exit();
             }
 
         })
