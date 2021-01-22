@@ -1,10 +1,11 @@
+// connecting the files and dependencies between the other files.
 const db = require("./DB");
 const inquirer = require("inquirer");
 const { viewRoles } = require("./DB");
 
-
+// getting the whole thing started. This is intended to be a looping function, waiting for a "quit" command selection.
 getStart()
-
+// launches a long prompt that will feed into a large switchboard directing into other functions.
 function getStart() {
     inquirer
         .prompt(
@@ -66,9 +67,10 @@ function getStart() {
         })
 }
 
+// 
 function addEmployee() {
     let employee = {}
-    // TODO: add inquirer prompts to fill the inserted info
+    
     inquirer.prompt([
         {
             name: "first_name",
@@ -97,15 +99,15 @@ function addEmployee() {
             role_id: input.role_id,
             manager_id: input.manager_id
         }
-
+        // logging the inputs and then calling out to the post function on the index.js file
         console.log(employee);
         db.createEmployee(employee);
-
+        //looping back
         getStart()
     })
 
 }
-
+// an in-process function that will dovetail into changing employee information.
 function findEmployee() {
     // TODO: Add inquirer prompts to specify the changes needed.
     let empRole = {}
@@ -163,7 +165,7 @@ function findEmployee() {
     })
 
 }
-
+//an in-process function that needs to collect the employee's id from their name and then delete the id on sql.
 function deleteEmployee() {
     // TODO: provdide a table of the employess and a prompt for the employee's id.
     console.log("tough break, man. Let's just get this done.");
@@ -180,7 +182,7 @@ function deleteEmployee() {
         }
     )
 }
-
+//function that will return a table of the current "employee" table
 function readEmployee() {
     console.log("So here's a list of the employees...\n");
     db.connection.query("SELECT * FROM employee", function (err, res) {
@@ -189,7 +191,7 @@ function readEmployee() {
         db.connection.end()
     });
 }
-
+// asks the user for the department their interested in and then attempts to search for employees in that department 
 function findEmpByDept() {
     let dept = {};
     db.connection.query("SELECT * FROM department", (err, departments) => {
@@ -228,6 +230,7 @@ function findEmpByDept() {
     })
 
 }
+// launches inquirer prompts that will then be sent to the "createDepart()"" in the index.js file
 function addDepart() {
     let departObj = {}
     // TODO: add inquirer prompts to fill the inserted info
@@ -252,7 +255,7 @@ function addDepart() {
     })
 
 }
-
+//will launch inquirer prompts that will collect information to pass onto the "createRole()" function in index.js
 function addRole() {
     let newRole = {}
     // TODO: add inquirer prompts to fill the inserted info
