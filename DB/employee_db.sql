@@ -21,20 +21,16 @@ CREATE TABLE employee (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
-    role_id  NULL,
+    role_id  INT NULL,
     manager_id INT NULL,
     PRIMARY KEY (id)
 );
 
-INSERT INTO department (name)
-VALUES ("Monster Tamer");
-
-INSERT INTO role (title, salary,department_id)
-VALUES ("Monster Doctor", 1000.99, 1);
-
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Chuck", "Manjean", 1,1);
-
 SELECT * FROM department;
 SELECT * FROM role;
 SELECT * FROM employee;
+
+-- SELECT employee.first_name, employee.last_name, employee.role_id, employee.manager_id 
+-- FROM employee 
+-- INNER JOIN role ON role.title = employee.role_id 
+-- INNER JOIN department ON department.name = role.department_id;
